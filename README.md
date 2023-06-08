@@ -21,4 +21,4 @@ You can deploy it to your web server or use it locally.
 
 
 ### App example working on mobile device
-<img src="./img/08_06_2023.gif" width="300"/>\
+<img src="./img/08_06_2023.gif" width="300"/>
