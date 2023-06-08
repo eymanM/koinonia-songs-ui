@@ -19,6 +19,6 @@ Run ```flutter build web``` to build the project for web I use only web version 
 Built web project is located in ```build/web``` directory.
 You can deploy it to your web server or use it locally.
 
-## Screenshots
-![Example screenshot](./img/screenshot_1.png)
-![Example gif with state of 08/06/2023 ](./08_06_2023.gif)
+
+### App example working on mobile device
+<img src="./img/08_06_2023.gif" width="300"/>\
