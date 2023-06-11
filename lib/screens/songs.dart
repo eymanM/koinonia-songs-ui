@@ -22,7 +22,7 @@ class SongScreenStateState extends ConsumerState<SongsScreen> {
 
   void filterSearchResults(String phrase) {
     var parsedNumberOrNull = int.tryParse(phrase);
-2
+
     if (parsedNumberOrNull != null && parsedNumberOrNull > 0 && parsedNumberOrNull <= allData.length) {setState(() {
         items = [allData.elementAt(parsedNumberOrNull - 1)];
       });

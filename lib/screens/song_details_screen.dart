@@ -47,15 +47,42 @@ class SongDetailsScreen extends ConsumerWidget {
               children = [
                 ...data.map((e) => ListView(shrinkWrap: true, physics: const ClampingScrollPhysics(), children: [
                       ListTile(
-                        contentPadding: const EdgeInsets.all(3),
-                        title: Text(
-                          e.text,
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                color: Theme.of(context).colorScheme.onBackground,
-                            fontSize: 21
-                              ),
+                        contentPadding: const EdgeInsets.only(left: 5),
+                        subtitle: RichText(
+                          text: TextSpan(
+                            text: e.text,
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                color: Theme.of(context).colorScheme.onBackground, fontSize: e.copyr != null ? 16 : 21),
+                            children: [
+                              if (e.grip != null) ...[
+                                const WidgetSpan(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 10.0),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: e.grip,
+                                  style: const TextStyle(
+                                    shadows: <Shadow>[
+                                      Shadow(
+                                        offset: Offset(5.0, 5.0),
+                                        blurRadius: 3.0,
+                                        color: Color.fromARGB(100, 120, 0, 0),
+                                      ),
+                                    ],
+                                    wordSpacing: 4,
+                                    color: Colors.black,
+                                    fontSize: 23,
+                                  ),
+                                )
+                              ],
+                            ],
+                          ),
                         ),
-                      ), const SizedBox(height: 1,)
+                      ),
+                      const SizedBox(
+                        height: 1,
+                      )
                     ])),
               ];
             } else {

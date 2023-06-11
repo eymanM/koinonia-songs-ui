@@ -1,17 +1,17 @@
 class SongEnt {
   const SongEnt({
-    required this.id,
     required this.number,
     required this.text,
     required this.copyr,
+    required this.grip,
   });
 
-  final int id;
   final int number;
   final String text;
   final int? copyr;
+  final String? grip;
 
   factory SongEnt.fromJson(Map<String, dynamic> json) {
-    return SongEnt(id: json['id'], number: json['numer'], text: json['tekst'], copyr: json['copyr']);
+    return SongEnt(number: json['numer'], text: json['tekst'], copyr: json['copyr'], grip: json['chwyt']);
   }
 }
