@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:localstorage/localstorage.dart';
-import '../models/song.dart';
+import '../models/song_basics.dart';
 
 
-class FavoriteSongNotifier extends StateNotifier<List<Song>> {
+class FavoriteSongNotifier extends StateNotifier<List<SongBasics>> {
   LocalStorage storage;
 
   FavoriteSongNotifier(this.storage) : super([]) {
@@ -13,18 +13,18 @@ class FavoriteSongNotifier extends StateNotifier<List<Song>> {
   }
 
   Future<void> getFavSongs(LocalStorage storage) async {
-    List<Song> favorites = [];
+    List<SongBasics> favorites = [];
     await storage.ready;
     if (storage.getItem('favorites') != null) {
       final favoriteJson = json.decode(storage.getItem('favorites'));
-      for (var age in favoriteJson) {
-        favorites.add(Song.fromJson(age));
+      for (var song in favoriteJson) {
+        favorites.add(SongBasics.fromJson(song));
       }
     }
     state = favorites;
   }
 
-  bool toggleSongFavoriteStatus(Song song) {
+  bool toggleSongFavoriteStatus(SongBasics song) {
     final songIsFavorite = state.contains(song);
 
     if (songIsFavorite) {
@@ -41,7 +41,7 @@ class FavoriteSongNotifier extends StateNotifier<List<Song>> {
   }
 }
 
-final favoriteSongProvider = StateNotifierProvider<FavoriteSongNotifier, List<Song>>((ref) {
+final favoriteSongProvider = StateNotifierProvider<FavoriteSongNotifier, List<SongBasics>>((ref) {
   LocalStorage storage = LocalStorage('favorites');
 
   return FavoriteSongNotifier(storage);

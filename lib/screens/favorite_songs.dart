@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:koinonia_songs/screens/song_details_screen.dart';
-import '../models/song.dart';
+import '../models/song_basics.dart';
 import '../providers/ApiService.dart';
 
 class FavoriteSongsScreen extends StatelessWidget {
-  const FavoriteSongsScreen({
+  FavoriteSongsScreen({
     super.key,
     required this.songsList,
   });
 
-  final List<Song> songsList;
+  final apiservice = ApiService();
+  final List<SongBasics> songsList;
 
-  void _selectSong(BuildContext context, Song song) {
+  void _selectSong(BuildContext context, SongBasics song) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => SongDetailsScreen(
           song: song,
-          songData: ApiService().getSong(song.number),
+          songData: apiservice.getSong(song.number),
         ),
       ),
     ); // Navigator.push(context, route)

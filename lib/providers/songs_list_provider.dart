@@ -1,25 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:koinonia_songs/models/song.dart';
+import 'package:koinonia_songs/models/song_basics.dart';
+import 'package:localstorage/localstorage.dart';
 import 'ApiService.dart';
 
-class Ala extends StateNotifier<List<Song>> {
+class ListOfAllSongsNotifier extends StateNotifier<List<SongBasics>> {
+  LocalStorage storage;
   Ref ref;
 
-  Ala(this.ref) : super([]) {
-    loadSongs();
-  }
+  ListOfAllSongsNotifier(this.storage, this.ref) : super([]);
 
-  Future<void> loadSongs() async {
-    state = (await ref.read(apiProvider).getSongs());
-  }
+  Future<List<SongBasics>> getAllSongs() async {
+    if (state.isNotEmpty) return state;
+    if (storage.getItem('songsList') == null) {
+      var songsList =  await ref.read(apiProvider).getSongs();
+      final encodedState = json.encode(songsList);
+      storage.setItem('songsList', encodedState);
+    }
 
-  Future<List<Song>> getSongs() async {
+    List<SongBasics> allSongsList = [];
+    final songsList = json.decode(storage.getItem('songsList'));
+
+
+    for (var song in songsList) {
+      allSongsList.add(SongBasics.fromJson(song));
+    }
+
+    state = allSongsList;
     return state;
   }
 
-  Future<List<Song>> getFilteredSongs(String searchStr) async {
-    List<Song> filtered = [];
-    for (Song song in state) {
+
+  Future<List<SongBasics>> getFilteredSongs(String searchStr) async {
+    if (state.isEmpty) {
+      state = await getAllSongs();
+    }
+
+    List<SongBasics> filtered = [];
+    for (SongBasics song in state) {
       if (song.title.toLowerCase().contains(searchStr)) {
         filtered.add(song);
       }
@@ -28,7 +47,8 @@ class Ala extends StateNotifier<List<Song>> {
   }
 }
 
-final songsListProvider = FutureProvider<List<Song>>((ref) async {
-
-  return ref.watch(apiProvider).getSongs();
+final songsListProvider = FutureProvider<List<SongBasics>>((ref) async {
+  LocalStorage storage = LocalStorage('songsList');
+  await storage.ready;
+  return await ListOfAllSongsNotifier(storage, ref).getAllSongs();
 });

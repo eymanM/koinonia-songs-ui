@@ -1,21 +1,22 @@
+import 'package:koinonia_songs/models/song_ent_part.dart';
+
 class Song {
   const Song({
     required this.number,
-    required this.title,
-    required this.toSpirit,
+    required this.parts,
   });
 
   final int number;
-  final String title;
-  final bool? toSpirit;
+  final List<SongEntPart> parts;
 
   factory Song.fromJson(Map<String, dynamic> json) {
-    return Song(number: json['numer'], title: json['tytul'], toSpirit: json['doDucha']);
+    return Song(number: json['number'], parts: (json['parts'] as List<dynamic>).map((val) => SongEntPart.fromJson(val)).toList());
   }
 
-  Map<String, dynamic> toJson() => {
-    'numer': number,
-    'tytul': title,
-    'doDucha': toSpirit,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'number': number,
+      'parts': parts,
+    };
+  }
 }

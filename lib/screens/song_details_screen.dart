@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:koinonia_songs/models/song.dart';
-import 'package:koinonia_songs/models/song_ent.dart';
+import 'package:koinonia_songs/models/song_basics.dart';
+import 'package:koinonia_songs/models/song_ent_part.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/grip_is_enabled_provider.dart';
 
@@ -12,9 +12,9 @@ class SongDetailsScreen extends ConsumerWidget {
     required this.songData,
   });
 
-  final Future<List<SongEnt>> songData;
+  final Future<List<SongEntPart>> songData;
 
-  final Song song;
+  final SongBasics song;
 
   @override
   Widget build(BuildContext context, ref) {
@@ -78,12 +78,12 @@ class SongDetailsScreen extends ConsumerWidget {
             },
           ),
         ]),
-        body: FutureBuilder<List<SongEnt>>(
+        body: FutureBuilder<List<SongEntPart>>(
           future: songData,
-          builder: (BuildContext context, AsyncSnapshot<List<SongEnt>> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<List<SongEntPart>> snapshot) {
             List<Widget> children;
             if (snapshot.hasData) {
-              final data = snapshot.data as List<SongEnt>;
+              final data = snapshot.data as List<SongEntPart>;
               children = [
                 ...data.map((e) {
                   showGrips = e.grip != null && isEnableIOnThisSong;

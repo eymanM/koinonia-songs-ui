@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:koinonia_songs/providers/songs_list_provider.dart';
+import 'package:koinonia_songs/providers/songs_provider.dart';
 import 'package:koinonia_songs/screens/song_details_screen.dart';
-import '../models/song.dart';
+import '../models/song_basics.dart';
 import '../providers/ApiService.dart';
+import '../widgets/GradientText.dart';
 
 class SongsScreen extends ConsumerStatefulWidget {
   const SongsScreen({
@@ -16,14 +18,16 @@ class SongsScreen extends ConsumerStatefulWidget {
 
 class SongScreenStateState extends ConsumerState<SongsScreen> {
   TextEditingController editingController = TextEditingController();
-  var items = <Song>[];
-  var allData = <Song>[];
+  var items = <SongBasics>[];
+  var allData = <SongBasics>[];
   var searchPhrase = '';
+  final apiservice = ApiService();
 
   void filterSearchResults(String phrase) {
     var parsedNumberOrNull = int.tryParse(phrase);
 
-    if (parsedNumberOrNull != null && parsedNumberOrNull > 0 && parsedNumberOrNull <= allData.length) {setState(() {
+    if (parsedNumberOrNull != null && parsedNumberOrNull > 0 && parsedNumberOrNull <= allData.length) {
+      setState(() {
         items = [allData.elementAt(parsedNumberOrNull - 1)];
       });
       return;
@@ -41,14 +45,13 @@ class SongScreenStateState extends ConsumerState<SongsScreen> {
     });
   }
 
-  void _selectSong(BuildContext context, Song song) {
+  void _selectSong(BuildContext context, SongBasics song) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) =>
-            SongDetailsScreen(
-              song: song,
-              songData: ApiService().getSong(song.number),
-            ),
+        builder: (ctx) => SongDetailsScreen(
+          song: song,
+          songData: apiservice.getSong(song.number),
+        ),
       ),
     ); // Navigator.push(context, route)
   }
@@ -88,24 +91,51 @@ class SongScreenStateState extends ConsumerState<SongsScreen> {
                     ),
                     itemBuilder: (context, index) {
                       return ListTile(
-                        contentPadding: const EdgeInsets.all(3),
-                        onTap: () => _selectSong(context, items[index]),
-                        title: Text(
-                          '${items[index].number}. ${items[index].title}',
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .onBackground,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: false,
-                        ),
-                      );
+                          contentPadding: const EdgeInsets.all(3),
+                          onTap: () => _selectSong(context, items[index]),
+                          title: items[index].toSpirit != true
+                              ? Text(
+                                  '${items[index].number}. ${items[index].title}',
+                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: false,
+                                )
+                              : Row(
+                                  children: [
+                                    Text(
+                                      '${items[index].number}.',
+                                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                        color: Theme.of(context).colorScheme.onBackground,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                    ),
+                                    const ImageIcon(
+                                      AssetImage("assets/dove2.png"),
+                                      size: 32,
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        items[index].title,
+                                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                              color: Theme.of(context).colorScheme.onBackground,
+                                            ),
+                                        overflow: TextOverflow.ellipsis,
+                                        softWrap: false,
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                      // GradientText(
+                      //         '${items[index].number}. ${items[index].title}',
+                      //         style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                      //         gradient: LinearGradient(colors: [
+                      //           Colors.blueAccent.withOpacity(0.9),
+                      //           Colors.blue.withOpacity(0.1),
+                      //         ]),
+                      //       ));
                     },
                   ),
                 ),
@@ -113,8 +143,7 @@ class SongScreenStateState extends ConsumerState<SongsScreen> {
             );
           },
           error: (err, s) => Text(err.toString()),
-          loading: () =>
-          const Center(
+          loading: () => const Center(
             child: CircularProgressIndicator(),
           ),
         );
